@@ -28,12 +28,11 @@ public class MovieFunctionsTest {
 
     @Test
     public final void getListOfActorsWithHighestIMDBRateTest(){
-        List<String> theActors = mf.getListOfActorsWithHighestIMDBRate(moviesForTest);
+        String cast = mf.getListOfActorsWithHighestIMDBRate(moviesForTest);
 
-        assertTrue(theActors.contains("Tim Robbins"));
-        assertTrue(theActors.contains("Morgan Freeman"));
-        assertTrue(theActors.contains("Bob Gunton"));
-        assertEquals(3, theActors.size());
+        assertTrue(cast.contains("Tim Robbins"));
+        assertTrue(cast.contains("Morgan Freeman"));
+        assertTrue(cast.contains("Bob Gunton"));
     }
 
     @Test

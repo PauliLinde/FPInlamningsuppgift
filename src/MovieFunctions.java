@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
 public class MovieFunctions {
 
 
@@ -21,7 +22,8 @@ public class MovieFunctions {
     }
 
     public String getListOfActorsWithHighestIMDBRate(List<Movie> m) {
-        return m.stream().max(Comparator.comparing(Movie::getImdbRating)).map(Movie::getCast).get().toString();
+        return m.stream().max(Comparator.comparing(Movie::getImdbRating)).map(Movie::getCast).stream().flatMap(value -> value.stream())
+                .collect(Collectors.joining(", ")).toString();
     }
 
     public String getTitleofMovieWithLowestAmountOfActors(List<Movie> m) {
@@ -49,4 +51,16 @@ public class MovieFunctions {
         Map<String, Long> mapTitles = movieTitles.stream().collect(Collectors.groupingBy(a -> a, Collectors.counting()));
         return mapTitles.entrySet().stream().anyMatch(v -> v.getValue() > 1);
     }
+
+    //Högre ordningens funktioner
+    public int getAmountOfUniqueType(List<Movie> m, MovieTypeSearcher s) {
+        return (int) s.getMovieType(m).distinct().count();
+    }
+
+    public Object actorsPlayedInMoreThanOneMovie(List<Movie> m, ActorSearcher aa){
+        List<String> actors = m.stream().map(Movie::getCast).flatMap(value -> value.stream()).toList();
+        Map<String, Long> mapActors = actors.stream().collect(Collectors.groupingBy(a -> a, Collectors.counting()));
+        return aa.getActors(mapActors.entrySet().stream());
+    }
+
 }

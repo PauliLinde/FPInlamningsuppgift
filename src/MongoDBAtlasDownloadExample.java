@@ -3,22 +3,29 @@ import org.bson.Document;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 
 public class MongoDBAtlasDownloadExample {
 
     MovieFunctions mf = new MovieFunctions();
+
+    MovieTypeSearcher language = l -> l.stream().map(Movie::getLanguages).flatMap(value -> value.stream());
+    MovieTypeSearcher genre = l -> l.stream().map(Movie::getGenres).flatMap(value -> value.stream());
+
+    ActorSearcher actorsPlayedInMoreThanOneMovie = f -> f.filter(v -> v.getValue() > 1).count();
+    ActorSearcher actorPlayedInMostMovies = f -> f.max(Comparator.comparing(Map.Entry::getValue)).map(Map.Entry::getKey).get().toString();
+
     public MongoDBAtlasDownloadExample() {
 
-        //Skriv in rätt url!
-        String uri = "mongodb+srv://paulinde:SecretPassword2025@cluster0.nibxg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+        String uri = "mongodb+srv://paupau:SecretPassword2025@cluster0.nibxg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
         try (MongoClient mongoClient = MongoClients.create(uri)) {
             MongoDatabase database = mongoClient.getDatabase("sample_mflix");
             MongoCollection<Document> moviesCollection = database.getCollection("movies");
 
-            //Get all movies from 1975
             List<Movie> movieList = new ArrayList<>();
             for (Document doc : moviesCollection.find(new Document("year", 1975))) {
                 {
@@ -31,16 +38,17 @@ public class MongoDBAtlasDownloadExample {
             System.out.println("Amount of genres: " + mf.getAmountOfUniqeGenres(movieList));
             System.out.println("The cast in highest rated movie: " + mf.getListOfActorsWithHighestIMDBRate(movieList));
             System.out.println("The movie with lowest amount of actors: " + mf.getTitleofMovieWithLowestAmountOfActors(movieList));
-            System.out.println("Actors that playes in more than 1 movie: " + mf.getAmountOfActorsThatPlayedInMoreThanOneMovie(movieList));
+            System.out.println("Actors that played in more than 1 movie: " + mf.getAmountOfActorsThatPlayedInMoreThanOneMovie(movieList));
             System.out.println("The actor that played in most movies: " + mf.getNameOfActorThatPlayedInMostMovies(movieList));
             System.out.println("Amount of languages: " + mf.getAmountOfUniqueLanguages(movieList));
             System.out.println("There are movies with same title: " + mf.moreThanOneMovieWithSameTitle(movieList));
 
+            System.out.println();
 
-
-            //Här gör du anrop till alla dina funktioner som ska skriva ut svaren på frågorna som
-            //efterfrågas i uppgiften
-
+            System.out.println("Amount of languages(högre ordningens funktion): " + mf.getAmountOfUniqueType(movieList, language));
+            System.out.println("Amount of genres(högre ordningens funktion): " + mf.getAmountOfUniqueType(movieList, genre));
+            System.out.println("Actors that played in more than 1 movie(högre ordningens funktion): " + mf.actorsPlayedInMoreThanOneMovie(movieList, actorsPlayedInMoreThanOneMovie));
+            System.out.println("The actor that played in most movies(högre ordningens funktion): " + mf.actorsPlayedInMoreThanOneMovie(movieList, actorPlayedInMostMovies));
 
         } catch (Exception e) {
             e.printStackTrace();
