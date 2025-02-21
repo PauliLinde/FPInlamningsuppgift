@@ -15,6 +15,9 @@ public class MongoDBAtlasDownloadExample {
     MovieTypeSearcher language = l -> l.stream().map(Movie::getLanguages).flatMap(value -> value.stream());
     MovieTypeSearcher genre = l -> l.stream().map(Movie::getGenres).flatMap(value -> value.stream());
 
+    MovieTypeSearcher2 language2 = l -> l.getLanguages();
+    MovieTypeSearcher2 genre2 = l -> l.getGenres();
+
     ActorSearcher actorsPlayedInMoreThanOneMovie = f -> f.filter(v -> v.getValue() > 1).count();
     ActorSearcher actorPlayedInMostMovies = f -> f.max(Comparator.comparing(Map.Entry::getValue)).map(Map.Entry::getKey).get().toString();
 
@@ -49,6 +52,8 @@ public class MongoDBAtlasDownloadExample {
             System.out.println("Amount of genres(högre ordningens funktion): " + mf.getAmountOfUniqueType(movieList, genre));
             System.out.println("Actors that played in more than 1 movie(högre ordningens funktion): " + mf.actorsPlayedInMoreThanOneMovie(movieList, actorsPlayedInMoreThanOneMovie));
             System.out.println("The actor that played in most movies(högre ordningens funktion): " + mf.actorsPlayedInMoreThanOneMovie(movieList, actorPlayedInMostMovies));
+            System.out.println("Amount of languages(högre ordningens funktion, andra försöket): " + mf.getAmountOfUniqueType2(movieList, language2));
+            System.out.println("Amount of genres(högre ordningens funktion, andra försöket): " + mf.getAmountOfUniqueType2(movieList, genre2));
 
         } catch (Exception e) {
             e.printStackTrace();

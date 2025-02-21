@@ -1,5 +1,4 @@
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -61,6 +60,11 @@ public class MovieFunctions {
         List<String> actors = m.stream().map(Movie::getCast).flatMap(value -> value.stream()).toList();
         Map<String, Long> mapActors = actors.stream().collect(Collectors.groupingBy(a -> a, Collectors.counting()));
         return aa.getActors(mapActors.entrySet().stream());
+    }
+
+    public int getAmountOfUniqueType2(List<Movie> m, MovieTypeSearcher2 s) {
+        //return (int) m.stream().map(mo -> s.getMovieType(mo)).distinct().count();
+        return (int) m.stream().map(mo -> s.getMovieType(mo)).flatMap(value -> value.stream()).distinct().count();
     }
 
 }
